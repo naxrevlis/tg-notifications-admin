@@ -1,0 +1,87 @@
+kind: pipeline
+name: default
+
+steps:
+  - name: test
+    image: python
+    commands:
+      - python -m pip install poetry
+      - python -m poetry install
+      - python -m poetry run pytest
+
+  - name: send telegram test notification
+    image: appleboy/drone-telegram
+    settings:
+      token:
+        from_secret: telegram_nxbot_token
+      to:
+        from_secret: telegram_alistro_user_id
+      message_file: drone_templates/message_drone_test.tpl
+
+  - name: docker
+    image: plugins/docker
+    settings:
+      insecure: true
+      repo: 100.90.71.128:8082/nax/tg_notifications_admin
+      registry: 100.90.71.128:8082
+      username:
+        from_secret: nexus_username
+      password:
+        from_secret: nexus_password
+    when:
+      branch:
+        - main
+
+  - name: send telegram docker build notification
+    image: appleboy/drone-telegram
+    settings:
+      token:
+        from_secret: telegram_nxbot_token
+      to:
+        from_secret: telegram_alistro_user_id
+      message_file: drone_templates/message_drone_docker_build.tpl
+
+
+# TODO: Fix deploy settings
+#  - name: deploy-ssh
+#    image: appleboy/drone-ssh
+#    environment:
+#      NEXUS_USER:
+#        from_secret: nexus_username
+#      NEXUS_PASSWORD:
+#        from_secret: nexus_password
+#      ENV_VAR:
+#        from_secret: env_file
+#    settings:
+#      host:
+#        - 100.90.71.128
+#      username: nax
+#      password:
+#        from_secret: ssh_password
+#      port: 22
+#      command_timeout: 2m
+#      envs: [ NEXUS_USER, NEXUS_PASSWORD, ENV_VAR ]
+#      script:
+#        - export PATH="/usr/local/bin:$PATH"
+#        - touch env.config
+#        - echo $ENV_VAR >> env.config
+#        - docker login -u $NEXUS_USER -p $NEXUS_PASSWORD 100.90.71.128:8082
+#        - docker pull 100.90.71.128:8082/nax/tg_notifications_admin:latest
+#        - docker image prune -f
+#        - docker stop days_count
+#        - docker container prune -f
+#        - docker run -d --env-file env.config -v /etc/localtime:/etc/localtime:ro --restart always --name days_count 100.90.71.128:8082/nax/days_count:latest
+#        - rm env.config
+#
+#    when:
+#      branch:
+#        - main
+#
+#  - name: send telegram deploy notification
+#    image: appleboy/drone-telegram
+#    settings:
+#      token:
+#        from_secret: telegram_nxbot_token
+#      to:
+#        from_secret: telegram_alistro_user_id
+#      message_file: drone_templates/message_drone_deploy.tpl
