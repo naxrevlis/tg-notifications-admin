@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "tg-notifications-admin"
+version = "0.1.0"
+description = ""
+authors = ["Maksim Panin <me@naxrevlis.com>"]
+readme = "README.md"
+packages = [{include = "tg_notifications_admin"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
