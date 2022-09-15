@@ -17,6 +17,8 @@ steps:
       to:
         from_secret: telegram_alistro_user_id
       message_file: drone_templates/message_drone_test.tpl
+    depends_on:
+      - test
 
   - name: docker
     image: plugins/docker
@@ -40,6 +42,11 @@ steps:
       to:
         from_secret: telegram_alistro_user_id
       message_file: drone_templates/message_drone_docker_build.tpl
+    depends_on:
+      - docker
+    when:
+      branch:
+        - main
 
 
 # TODO: Fix deploy settings
