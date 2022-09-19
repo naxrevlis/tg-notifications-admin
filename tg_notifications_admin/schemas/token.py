@@ -1,3 +1,11 @@
-from tortoise.contrib.pydantic import pydantic_model_creator
+from typing import Optional
 
-from tg_notifications_admin.database.models import token
+from pydantic import BaseModel
+
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
+
+
+class Status(BaseModel):
+    status: str

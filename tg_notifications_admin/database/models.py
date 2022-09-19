@@ -8,6 +8,7 @@ class Users(models.Model):
     first_name: str = fields.CharField(max_length=30, null=True)
     last_name: str = fields.CharField(max_length=30, null=True)
     password: str = fields.CharField(max_length=120)
+    is_admin: bool = fields.BooleanField(default=False)
     created_at: datetime = fields.DatetimeField(auto_now_add=True)
     modified_at: datetime = fields.DatetimeField(auto_now=True)
 
@@ -20,4 +21,3 @@ class Tokens(models.Model):
     )
     created_at: datetime = fields.DatetimeField(auto_now_add=True)
     modified_at: datetime = fields.DatetimeField(auto_now=True)
-
